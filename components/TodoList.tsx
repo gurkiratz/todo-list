@@ -1,20 +1,13 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
-import { todoType } from '@/types/todoType'
-import { InsertTodo, SelectTodo } from '@/drizzle/schema'
-
-type Todo = {
-  id: number
-  isCompleted: boolean
-  text: string
-}
+import { SelectTodo } from '@/drizzle/schema'
 
 type TodoProps = {
   todos: SelectTodo[]
   onToggle: (id: string) => void
-  onDelete: (id: string | undefined) => void
+  onDelete: (id: string) => void
 }
 
 const TodoList: React.FC<TodoProps> = ({ todos, onToggle, onDelete }) => {
