@@ -1,7 +1,11 @@
 import { Webhook } from 'svix'
 import { headers } from 'next/headers'
 import { WebhookEvent } from '@clerk/nextjs/server'
-import { createOrg, createOrgMember } from '@/actions/orgActions'
+import {
+  createOrg,
+  createOrgMember,
+  deleteOrgMemberTodos,
+} from '@/actions/orgActions'
 
 export async function POST(req: Request) {
   // You can find this in the Clerk Dashboard -> Webhooks -> choose the endpoint
@@ -68,6 +72,25 @@ export async function POST(req: Request) {
 
     // Create org member
     await createOrgMember(orgId, clerkUserId, 'admin')
+
+    console.log(
+      `Webhook with and ID of ${clerkUserId} and type of ${eventType}`
+    )
+    console.log('Webhook body:', body)
+  }
+
+  // if event type is user.deleted, delete org
+  if (eventType === 'user.deleted') {
+    const { id: clerkUserId } = evt.data
+
+    if (!clerkUserId) {
+      return new Response('Error occurred -- missing data', {
+        status: 400,
+      })
+    }
+
+    await deleteOrgMemberTodos(clerkUserId)
+
     console.log(
       `Webhook with and ID of ${clerkUserId} and type of ${eventType}`
     )

@@ -1,5 +1,10 @@
 import { db } from '@/drizzle/db'
-import { OrganizationTable, OrgMembershipTable } from '@/drizzle/schema'
+import {
+  OrganizationTable,
+  OrgMembershipTable,
+  TodoTable,
+} from '@/drizzle/schema'
+import { eq } from 'drizzle-orm'
 
 export async function createOrg(name: string) {
   const [newOrg] = await db
@@ -18,4 +23,15 @@ export async function createOrgMember(
     .insert(OrgMembershipTable)
     .values({ orgId, clerkUserId: userId, role })
     .execute()
+}
+
+// function to deleteOrg
+export async function deleteOrgMemberTodos(userId: string) {
+  // Delete todos for the user
+  await db.delete(TodoTable).where(eq(TodoTable.clerkUserId, userId))
+
+  // Delete org memberships for the user
+  await db
+    .delete(OrgMembershipTable)
+    .where(eq(OrgMembershipTable.clerkUserId, userId))
 }
