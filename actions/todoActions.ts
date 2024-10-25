@@ -4,11 +4,16 @@ import { TodoTable } from '@/drizzle/schema'
 import { and, desc, eq, not } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 
-export async function getTodos(userId: string) {
+export async function getTodos(userId: string, orgId: string) {
   return db
     .select()
     .from(TodoTable)
-    .where(eq(TodoTable.clerkUserId, userId))
+    .where(
+      and(
+        eq(TodoTable.clerkUserId, userId),
+        eq(TodoTable.organizationId, orgId)
+      )
+    )
     .orderBy(desc(TodoTable.createdAt))
 }
 
