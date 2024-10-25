@@ -5,11 +5,18 @@ import { Button } from './ui/button'
 import { PlusCircle } from 'lucide-react'
 
 type Props = {
-  createTodo: () => void
+  createTodo: (newTodo: string) => void
 }
 
 const AddTodo: React.FC<Props> = ({ createTodo }) => {
   const [newTodo, setNewTodo] = useState('')
+
+  const handleCreate = (newTodo: string) => {
+    if (newTodo.trim()) {
+      createTodo(newTodo)
+      setNewTodo('')
+    }
+  }
 
   return (
     <div className="mt-8">
@@ -24,9 +31,9 @@ const AddTodo: React.FC<Props> = ({ createTodo }) => {
               placeholder="Enter a new todo"
               value={newTodo}
               onChange={(e) => setNewTodo(e.target.value)}
-              onKeyUp={(e) => e.key === 'Enter' && createTodo()}
+              onKeyUp={(e) => e.key === 'Enter' && handleCreate(newTodo)}
             />
-            <Button onClick={createTodo}>
+            <Button onClick={() => handleCreate(newTodo)}>
               <PlusCircle className="mr-2 h-4 w-4" /> Add
             </Button>
           </div>
