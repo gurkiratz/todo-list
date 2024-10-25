@@ -6,6 +6,15 @@ import {
 } from '@/drizzle/schema'
 import { eq } from 'drizzle-orm'
 
+// function to getOrgId
+export async function getOrgId(userId: string) {
+  const orgMemberships = await db
+    .select({ orgId: OrgMembershipTable.orgId })
+    .from(OrgMembershipTable)
+    .where(eq(OrgMembershipTable.clerkUserId, userId))
+  return orgMemberships[0]?.orgId
+}
+
 export async function createOrg(name: string) {
   const [newOrg] = await db
     .insert(OrganizationTable)
