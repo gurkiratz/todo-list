@@ -1,3 +1,4 @@
+'use server'
 import { db } from '@/drizzle/db'
 import {
   OrganizationTable,
@@ -6,13 +7,24 @@ import {
 } from '@/drizzle/schema'
 import { eq } from 'drizzle-orm'
 
-// function to getOrgId
+// function to getOrgId based on userId
 export async function getOrgId(userId: string) {
-  const orgMemberships = await db
+  return await db
     .select({ orgId: OrgMembershipTable.orgId })
     .from(OrgMembershipTable)
     .where(eq(OrgMembershipTable.clerkUserId, userId))
-  return orgMemberships[0]?.orgId
+}
+
+// function to get org id and org name
+export async function getOrg(userId: string) {
+  return await db
+    .select({ name: OrganizationTable.name, orgId: OrganizationTable.id })
+    .from(OrgMembershipTable)
+    .innerJoin(
+      OrganizationTable,
+      eq(OrganizationTable.id, OrgMembershipTable.orgId)
+    )
+    .where(eq(OrgMembershipTable.clerkUserId, userId))
 }
 
 export async function createOrg(name: string) {

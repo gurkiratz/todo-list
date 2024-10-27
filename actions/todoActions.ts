@@ -1,6 +1,6 @@
 'use server'
 import { db } from '@/drizzle/db'
-import { TodoTable } from '@/drizzle/schema'
+import { OrgMembershipTable, TodoTable } from '@/drizzle/schema'
 import { and, desc, eq, not } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 
@@ -12,10 +12,20 @@ export async function getTodos(userId: string, orgId: string) {
     .orderBy(desc(TodoTable.createdAt))
 }
 
+export async function getTodosByUserId(userId: string) {
+  return db
+    .select()
+    .from(TodoTable)
+    .leftJoin(OrgMembershipTable, eq(TodoTable.orgId, OrgMembershipTable.orgId))
+    .where(eq(OrgMembershipTable.clerkUserId, userId))
+}
+
 export async function addTodo(userId: string, orgId: string, text: string) {
-  await db
+  const id = await db
     .insert(TodoTable)
     .values({ clerkUserId: userId, orgId, text, isCompleted: false })
+    .returning({ id: TodoTable.id })
+  console.log(id)
   revalidatePath('/user')
 }
 

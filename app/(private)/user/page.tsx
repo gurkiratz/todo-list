@@ -11,25 +11,26 @@ import {
 import { InsertTodo } from '@/drizzle/schema'
 import AddTodo from '@/components/AddTodo'
 import TodoView from '@/components/TodoView'
+import { useRecoilValue } from 'recoil'
+import { selectedOrgState } from '@/recoil/atoms/orgAtom'
 
 function App() {
   const [todos, setTodos] = useState<InsertTodo[]>([])
-  const [orgId, setOrgId] = useState<string>(
-    '9c328dcf-2653-4302-8ca2-6e5acd623e9d'
-  )
+  const orgId = useRecoilValue(selectedOrgState)
   const { userId } = useAuth()
 
   useEffect(() => {
     const fetchTodos = async () => {
       if (userId != null && orgId != null) {
-        const todos = await getTodos(userId, orgId)
-        setTodos(todos)
+        const result = await getTodos(userId, orgId)
+        setTodos(result)
       }
     }
     fetchTodos()
-  }, [])
+  }, [orgId])
 
   if (userId == null) return RedirectToSignIn({ redirectUrl: '/' })
+  if (orgId == null) return <div>OrgId is not defined</div>
 
   const handleCreateTodo = (newTodo: string) => {
     addTodo(userId, orgId, newTodo)
