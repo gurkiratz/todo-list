@@ -8,49 +8,26 @@ import {
   getTodos,
   toggleTodo,
 } from '@/actions/todoActions'
-import { getOrgId } from '@/actions/orgActions'
 import { InsertTodo } from '@/drizzle/schema'
 import AddTodo from '@/components/AddTodo'
 import TodoView from '@/components/TodoView'
 
 function App() {
   const [todos, setTodos] = useState<InsertTodo[]>([])
-  const [orgId, setOrgId] = useState<string>('')
+  const [orgId, setOrgId] = useState<string>(
+    '9c328dcf-2653-4302-8ca2-6e5acd623e9d'
+  )
   const { userId } = useAuth()
-
-  // useEffect(() => {
-  //   const fetchOrgId_Todos = async () => {
-  //     if (userId != null) {
-  //       const orgId = await getOrgId(userId)
-  //       setOrgId(orgId)
-  //       const todos = await getTodos(userId, orgId)
-  //       setTodos(todos)
-  //     }
-  //   }
-  //   fetchOrgId_Todos()
-  // }, [])
-
-  useEffect(() => {
-    const fetchOrgId = async () => {
-      'use server'
-      if (userId != null) {
-        const orgId = await getOrgId(userId)
-        setOrgId(orgId)
-      }
-    }
-    fetchOrgId()
-  }, [userId]) // Run when userId changes
 
   useEffect(() => {
     const fetchTodos = async () => {
-      'use server'
       if (userId != null && orgId != null) {
         const todos = await getTodos(userId, orgId)
         setTodos(todos)
       }
     }
     fetchTodos()
-  }, [userId, orgId]) // Run when userId or orgId changes
+  }, [])
 
   if (userId == null) return RedirectToSignIn({ redirectUrl: '/' })
 
