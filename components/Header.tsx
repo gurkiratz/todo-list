@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Select,
   SelectTrigger,
@@ -11,13 +11,42 @@ import {
 import { Button } from './ui/button'
 import { Table2Icon } from 'lucide-react'
 import Link from 'next/link'
-import { SignInButton, useAuth, UserButton, useUser } from '@clerk/nextjs'
+import { SignInButton, useAuth, UserButton } from '@clerk/nextjs'
+import { useRecoilState } from 'recoil'
+import { getOrg } from '@/actions/orgActions'
+import { selectedOrgState } from '@/recoil/atoms/orgAtom'
+
+type OrgsType = {
+  orgId: string
+  name: string
+}
 
 const Header = () => {
+  const [orgs, setOrgs] = useState<OrgsType[]>()
+  // const [orgs, setOrgs] = useState<string[]>([
+  //   '9c328dcf-2653-4302-8ca2-6e5acd623e9d',
+  //   '9c328dcf-2342-4302-8ca2-6e5acd623e9d',
+  // ])
+  const [selectedOrg, setSelectedOrg] = useRecoilState(selectedOrgState)
   const { userId } = useAuth()
-  const { user } = useUser()
-  const [selectedOrg, setSelectedOrg] = useState('org1')
-  console.log(user?.username)
+
+  useEffect(() => {
+    const fetchOrgs = async () => {
+      if (userId != null) {
+        const result = await getOrg(userId!)
+        console.log(result)
+        setOrgs(result)
+
+        if (result.length > 0) {
+          setSelectedOrg(result[0].orgId)
+        }
+      }
+    }
+    fetchOrgs()
+  }, [])
+
+  if (!orgs) return <header>No orgs</header>
+
   return (
     <header className="bg-primary text-primary-foreground py-4">
       <div className="container mx-auto flex justify-between items-center">
@@ -25,14 +54,16 @@ const Header = () => {
           Todo App <Table2Icon />
         </Link>
         <div className="flex items-center space-x-4">
-          <Select value={selectedOrg} onValueChange={setSelectedOrg}>
+          <Select value={selectedOrg!} onValueChange={setSelectedOrg}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Select team" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="org1">Team 1</SelectItem>
-              <SelectItem value="org2">Team 2</SelectItem>
-              <SelectItem value="org3">Team 3</SelectItem>
+              {orgs.map((org) => (
+                <SelectItem key={org.orgId} value={org.orgId}>
+                  {org.name}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
 
