@@ -8,51 +8,29 @@ import {
   getTodos,
   toggleTodo,
 } from '@/actions/todoActions'
-import { getOrgId } from '@/actions/orgActions'
 import { InsertTodo } from '@/drizzle/schema'
 import AddTodo from '@/components/AddTodo'
 import TodoView from '@/components/TodoView'
+import { useRecoilValue } from 'recoil'
+import { selectedOrgState } from '@/recoil/atoms/orgAtom'
 
 function App() {
   const [todos, setTodos] = useState<InsertTodo[]>([])
-  const [orgId, setOrgId] = useState<string>('')
+  const orgId = useRecoilValue(selectedOrgState)
   const { userId } = useAuth()
-
-  // useEffect(() => {
-  //   const fetchOrgId_Todos = async () => {
-  //     if (userId != null) {
-  //       const orgId = await getOrgId(userId)
-  //       setOrgId(orgId)
-  //       const todos = await getTodos(userId, orgId)
-  //       setTodos(todos)
-  //     }
-  //   }
-  //   fetchOrgId_Todos()
-  // }, [])
-
-  useEffect(() => {
-    const fetchOrgId = async () => {
-      'use server'
-      if (userId != null) {
-        const orgId = await getOrgId(userId)
-        setOrgId(orgId)
-      }
-    }
-    fetchOrgId()
-  }, [userId]) // Run when userId changes
 
   useEffect(() => {
     const fetchTodos = async () => {
-      'use server'
       if (userId != null && orgId != null) {
-        const todos = await getTodos(userId, orgId)
-        setTodos(todos)
+        const result = await getTodos(userId, orgId)
+        setTodos(result)
       }
     }
     fetchTodos()
-  }, [userId, orgId]) // Run when userId or orgId changes
+  }, [orgId])
 
   if (userId == null) return RedirectToSignIn({ redirectUrl: '/' })
+  if (orgId == null) return <div>OrgId is not defined</div>
 
   const handleCreateTodo = (newTodo: string) => {
     addTodo(userId, orgId, newTodo)
