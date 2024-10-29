@@ -55,4 +55,19 @@ export async function deleteOrgMemberTodos(userId: string) {
   await db
     .delete(OrgMembershipTable)
     .where(eq(OrgMembershipTable.clerkUserId, userId))
+
+  // delete org record from organization table
+  const orgs = await db
+    .select({ orgId: OrganizationTable.id })
+    .from(OrgMembershipTable)
+    .innerJoin(
+      OrganizationTable,
+      eq(OrganizationTable.id, OrgMembershipTable.orgId)
+    )
+    .where(eq(OrgMembershipTable.clerkUserId, userId))
+
+  for (const orgId in orgs) {
+    console.log(orgId)
+    await db.delete(OrganizationTable).where(eq(OrganizationTable.id, orgId))
+  }
 }
