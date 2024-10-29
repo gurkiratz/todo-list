@@ -1,5 +1,20 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+# Todo List App
+
+A full stack todo list application
+
+## Tech Stack
+Next.js
+
+Database - Supabase + drizzle ORM
+
+Auth - Clerk authentication
+
+UI Components - shadcn
+
+State management - Recoil.js
+
 ## Getting Started
 
 First, run the development server:
