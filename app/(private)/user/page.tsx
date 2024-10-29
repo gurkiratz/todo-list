@@ -42,8 +42,8 @@ function App() {
 
   const handleToggle = (id: string) => {
     toggleTodo(id, userId, orgId)
-    setTodos(
-      todos.map((todo) =>
+    setTodos((prev) =>
+      prev.map((todo) =>
         todo.id === id ? { ...todo, isCompleted: !todo.isCompleted } : todo
       )
     )
@@ -57,7 +57,6 @@ function App() {
   return (
     <div className="min-h-screen flex flex-col">
       <main className="flex-grow container mx-auto p-4">
-        <h1 className="text-2xl font-bold mb-4">Org id: {orgId} </h1>
         <TodoView
           todos={todos}
           handleToggle={handleToggle}

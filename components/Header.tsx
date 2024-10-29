@@ -11,7 +11,12 @@ import {
 import { Button } from './ui/button'
 import { Table2Icon } from 'lucide-react'
 import Link from 'next/link'
-import { SignInButton, useAuth, UserButton } from '@clerk/nextjs'
+import {
+  RedirectToSignIn,
+  SignInButton,
+  useAuth,
+  UserButton,
+} from '@clerk/nextjs'
 import { useRecoilState } from 'recoil'
 import { getOrg } from '@/actions/orgActions'
 import { selectedOrgState } from '@/recoil/atoms/orgAtom'
@@ -23,10 +28,6 @@ type OrgsType = {
 
 const Header = () => {
   const [orgs, setOrgs] = useState<OrgsType[]>()
-  // const [orgs, setOrgs] = useState<string[]>([
-  //   '9c328dcf-2653-4302-8ca2-6e5acd623e9d',
-  //   '9c328dcf-2342-4302-8ca2-6e5acd623e9d',
-  // ])
   const [selectedOrg, setSelectedOrg] = useRecoilState(selectedOrgState)
   const { userId } = useAuth()
 
@@ -45,6 +46,7 @@ const Header = () => {
     fetchOrgs()
   }, [])
 
+  if (userId == null) return RedirectToSignIn({ redirectUrl: '/' })
   if (!orgs) return <header>No orgs</header>
 
   return (
