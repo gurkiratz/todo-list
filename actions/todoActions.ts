@@ -65,7 +65,7 @@ export const editTodo = async (
 }
 
 export async function deleteTodo(id: string, userId: string, orgId: string) {
-  const result = await db
+  await db
     .delete(TodoTable)
     .where(
       and(
@@ -75,6 +75,5 @@ export async function deleteTodo(id: string, userId: string, orgId: string) {
       )
     )
 
-  revalidatePath('/todos')
-  return result
+  revalidatePath('/user')
 }
