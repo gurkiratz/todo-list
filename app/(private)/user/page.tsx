@@ -78,8 +78,8 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <main className="flex-grow container mx-auto p-4">
+    <div className="min-h-screen flex flex-col bg-blue-900/10">
+      <main className="flex-grow container mx-auto p-4 ">
         <TodoView
           todos={todos}
           handleToggle={handleToggle}
