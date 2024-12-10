@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useParams } from 'next/navigation'
+// import { useParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -9,7 +9,7 @@ import { useToast } from '@/hooks/use-toast'
 
 export default function InviteMembersPage() {
   const [email, setEmail] = useState('')
-  const { orgId } = useParams()
+  // const { orgId } = useParams()
   const { toast } = useToast()
 
   const handleSubmit = async (e: React.FormEvent) => {

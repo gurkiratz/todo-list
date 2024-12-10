@@ -46,6 +46,7 @@ const Header = () => {
       }
     }
     fetchOrgs()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleInviteMembers = () => {
