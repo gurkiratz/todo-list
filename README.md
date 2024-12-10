@@ -1,19 +1,27 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🚀 Modern Todo App
 
-# Todo List App
+![Demo Screenshot](/path/to/your/screenshot.png)
 
-A full stack todo list application
+A sleek and efficient todo application built with cutting-edge technologies. Stay organized and boost your productivity with this feature-rich task management solution.
 
-## Tech Stack
-Next.js
+## ✨ Features
 
-Database - Supabase + drizzle ORM
+- 🔐 Secure authentication with Clerk
+- 🔄 Real-time updates
+- 🌓 Dark mode support
+- 🏢 Multi-organization task management
+- 📱 Responsive design for all devices
+- 🔍 Advanced filtering and sorting options
 
-Auth - Clerk authentication
+## 🛠️ Tech Stack
 
-UI Components - shadcn
-
-State management - Recoil.js
+- **Frontend**: [Next.js](https://nextjs.org/) - React framework for server-side rendering and static site generation
+- **Authentication**: [Clerk](https://clerk.dev/) - Complete user management solution
+- **Database**: [Supabase](https://supabase.io/) - Open-source Firebase alternative
+- **ORM**: [Drizzle ORM](https://orm.drizzle.team/) - TypeScript ORM for SQL databases
+- **UI Components**: [shadcn/ui](https://ui.shadcn.com/) - Re-usable components built with Radix UI and Tailwind CSS
+- **State Management**: [Recoil.js](https://recoiljs.org/) - State management library for React
+- **Development**: [ngrok](https://ngrok.com/) - Secure tunneling for local development
 
 ## Getting Started
 
