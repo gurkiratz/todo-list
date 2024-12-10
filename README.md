@@ -1,6 +1,7 @@
 # 🚀 Modern Todo App
 
-![Demo Screenshot](/path/to/your/screenshot.png)
+![image](https://github.com/user-attachments/assets/e25d7bda-41fe-4554-911f-61532583a657)
+
 
 A sleek and efficient todo application built with cutting-edge technologies. Stay organized and boost your productivity with this feature-rich task management solution.
 
