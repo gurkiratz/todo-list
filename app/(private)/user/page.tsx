@@ -13,6 +13,7 @@ import { InsertTodo } from '@/drizzle/schema'
 import AddTodo from '@/components/AddTodo'
 import TodoView from '@/components/TodoView'
 import { useRecoilState, useRecoilValue } from 'recoil'
+import Loader from '@/components/ui/loader'
 import { loadingState, selectedOrgState } from '@/recoil/atoms'
 
 function App() {
@@ -32,7 +33,12 @@ function App() {
   }, [orgId])
 
   if (userId == null) return RedirectToSignIn({ redirectUrl: '/' })
-  if (orgId == null) return <div>OrgId is not defined</div>
+  if (orgId == null)
+    return (
+      <div className="h-screen">
+        <Loader text="Loading organization..." />
+      </div>
+    )
 
   const handleAsyncAction = async (
     actionFunc: (...args: any[]) => Promise<void>,
