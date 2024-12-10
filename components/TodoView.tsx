@@ -15,9 +15,15 @@ type Props = {
   todos: InsertTodo[]
   handleToggle: (id: string) => void
   handleDelete: (id: string) => void
+  onUpdateDescription: (id: string, description: string) => void
 }
 
-const TodoView: React.FC<Props> = ({ todos, handleDelete, handleToggle }) => {
+const TodoView: React.FC<Props> = ({
+  todos,
+  handleDelete,
+  handleToggle,
+  onUpdateDescription,
+}) => {
   const todoLists = [
     {
       title: 'To Do',
@@ -48,6 +54,7 @@ const TodoView: React.FC<Props> = ({ todos, handleDelete, handleToggle }) => {
                 todos={list.todos}
                 onToggle={handleToggle}
                 onDelete={handleDelete}
+                onUpdateDescription={onUpdateDescription}
               />
             </CardContent>
           </Card>
@@ -79,6 +86,7 @@ const TodoView: React.FC<Props> = ({ todos, handleDelete, handleToggle }) => {
                     todos={list.todos}
                     onToggle={handleToggle}
                     onDelete={handleDelete}
+                    onUpdateDescription={onUpdateDescription}
                   />
                 </CardContent>
               </Card>

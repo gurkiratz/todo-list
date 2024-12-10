@@ -1,95 +1,109 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useTransition, useCallback } from 'react'
 import { RedirectToSignIn, useAuth } from '@clerk/nextjs'
 import {
   addTodo,
   deleteTodo,
   getTodos,
   toggleTodo,
+  updateTodoDescription,
 } from '@/actions/todoActions'
-import { InsertTodo } from '@/drizzle/schema'
+import { TodoTable } from '@/drizzle/schema'
 import AddTodo from '@/components/AddTodo'
 import TodoView from '@/components/TodoView'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useRecoilValue } from 'recoil'
 import Loader from '@/components/ui/loader'
-import { loadingState, selectedOrgState } from '@/recoil/atoms'
+import { selectedOrgState } from '@/recoil/atoms'
 
 function App() {
-  const [isLoading, setIsLoading] = useRecoilState(loadingState)
-  const [todos, setTodos] = useState<InsertTodo[]>([])
+  // const [isLoading, setIsLoading] = useRecoilState(loadingState)
+  const [todos, setTodos] = useState<(typeof TodoTable.$inferInsert)[]>([])
+  const [isPending, startTransition] = useTransition()
   const orgId = useRecoilValue(selectedOrgState)
-  const { userId } = useAuth()
+  const { userId: clerkUserId } = useAuth()
+
+  const fetchTodos = useCallback(async () => {
+    if (clerkUserId && orgId) {
+      const result = await getTodos(clerkUserId, orgId)
+      setTodos(result)
+    }
+  }, [clerkUserId, orgId])
 
   useEffect(() => {
-    const fetchTodos = async () => {
-      if (userId != null && orgId != null) {
-        const result = await getTodos(userId, orgId)
-        setTodos(result)
-      }
-    }
     fetchTodos()
-  }, [orgId])
+  }, [fetchTodos])
 
-  if (userId == null) return RedirectToSignIn({ redirectUrl: '/' })
-  if (orgId == null)
+  if (!clerkUserId) return RedirectToSignIn({ redirectUrl: '/' })
+  if (!orgId)
     return (
       <div className="h-screen">
         <Loader text="Loading organization..." />
       </div>
     )
 
-  const handleAsyncAction = async (
-    actionFunc: (...args: any[]) => Promise<void>,
-    ...args: any[]
-  ) => {
-    if (isLoading) return // Prevent further actions while loading
-
-    try {
-      setIsLoading(true) // Set loading state to true
-      await actionFunc(...args) // Call the action function with arguments
-    } catch (error: Error | any) {
-      console.error('Error:', error)
-      alert('An error occurred. Please try again. Error: ' + error.message) // Generic error message
-    } finally {
-      setIsLoading(false) // Reset loading state
-    }
-  }
-
-  const handleCreateTodo = async (newTodo: string) => {
-    // await addTodo(userId, orgId, newTodo)
-    await handleAsyncAction(addTodo, userId, orgId, newTodo)
-    setTodos((prev) => [
-      { clerkUserId: userId, orgId, text: newTodo, isCompleted: false },
-      ...prev,
-    ])
+  const handleCreateTodo = async (newTodoText: string) => {
+    startTransition(async () => {
+      try {
+        const newTodo = await addTodo(clerkUserId, orgId, newTodoText)
+        setTodos((prev) => [newTodo, ...prev])
+      } catch (error) {
+        console.error('Error creating todo:', error)
+        alert('Failed to create todo. Please try again.')
+      }
+    })
   }
 
   const handleToggle = async (id: string) => {
-    // await toggleTodo(id, userId, orgId)
-
-    await handleAsyncAction(toggleTodo, id, userId, orgId)
-    setTodos((prev) =>
-      prev.map((todo) =>
-        todo.id === id ? { ...todo, isCompleted: !todo.isCompleted } : todo
-      )
-    )
+    startTransition(async () => {
+      try {
+        const updatedTodo = await toggleTodo(id, clerkUserId, orgId)
+        setTodos((prev) =>
+          prev.map((todo) => (todo.id === id ? updatedTodo : todo))
+        )
+      } catch (error) {
+        console.error('Error toggling todo:', error)
+        alert('Failed to update todo. Please try again.')
+      }
+    })
   }
 
   const handleDelete = async (id: string) => {
-    // await deleteTodo(id, userId, orgId)
-    setTodos(todos.filter((todo) => todo.id !== id))
-    await handleAsyncAction(deleteTodo, id, userId, orgId)
+    startTransition(async () => {
+      try {
+        await deleteTodo(id, clerkUserId, orgId)
+        setTodos((prev) => prev.filter((todo) => todo.id !== id))
+      } catch (error) {
+        console.error('Error deleting todo:', error)
+        alert('Failed to delete todo. Please try again.')
+      }
+    })
+  }
+
+  const handleUpdateDescription = async (id: string, description: string) => {
+    startTransition(async () => {
+      try {
+        const updatedTodo = await updateTodoDescription(id, description)
+        setTodos((prev) =>
+          prev.map((todo) => (todo.id === id ? updatedTodo : todo))
+        )
+      } catch (error) {
+        console.error('Error updating todo description:', error)
+        alert('Failed to update todo description. Please try again.')
+      }
+    })
   }
 
   return (
     <div className="min-h-screen flex flex-col bg-blue-900/10">
       <main className="flex-grow container mx-auto p-4 ">
+        {isPending && <Loader text="Updating..." />}
         <TodoView
           todos={todos}
           handleToggle={handleToggle}
           handleDelete={handleDelete}
+          onUpdateDescription={handleUpdateDescription}
         />
 
         <AddTodo createTodo={handleCreateTodo} />
