@@ -7,9 +7,10 @@ import {
   SelectValue,
   SelectContent,
   SelectItem,
+  SelectSeparator,
 } from '@/components/ui/select'
 import { Button } from './ui/button'
-import { Table2Icon } from 'lucide-react'
+import { Table2Icon, UserPlus } from 'lucide-react'
 import Link from 'next/link'
 import {
   RedirectToSignIn,
@@ -20,6 +21,7 @@ import {
 import { useRecoilState } from 'recoil'
 import { getOrg } from '@/actions/orgActions'
 import { selectedOrgState } from '@/recoil/atoms'
+import { useRouter } from 'next/navigation'
 
 type OrgsType = {
   orgId: string
@@ -30,12 +32,12 @@ const Header = () => {
   const [orgs, setOrgs] = useState<OrgsType[]>()
   const [selectedOrg, setSelectedOrg] = useRecoilState(selectedOrgState)
   const { userId } = useAuth()
+  const router = useRouter()
 
   useEffect(() => {
     const fetchOrgs = async () => {
       if (userId != null) {
         const result = await getOrg(userId!)
-        console.log(result)
         setOrgs(result)
 
         if (result.length > 0) {
@@ -45,6 +47,10 @@ const Header = () => {
     }
     fetchOrgs()
   }, [])
+
+  const handleInviteMembers = () => {
+    router.push(`/invite-members/${selectedOrg}`)
+  }
 
   if (userId == null) return RedirectToSignIn({ redirectUrl: '/' })
 
@@ -68,9 +74,19 @@ const Header = () => {
                     {org.name}
                   </SelectItem>
                 ))}
+                <SelectSeparator />
               </SelectContent>
             </Select>
           )}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleInviteMembers}
+            disabled={!selectedOrg}
+            title="Invite Members"
+          >
+            <UserPlus className="h-4 w-4" />
+          </Button>
           {!userId && (
             <Button variant="secondary" asChild>
               {/* <User className="mr-2 h-4 w-4" />

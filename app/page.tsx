@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation'
 
 export default async function LandingPage() {
   const { userId }: { userId: string | null } = await auth()
-  if (userId !== null) redirect('/user')
+  if (userId !== null) redirect(`/todos/${userId}`)
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-indigo-50 via-white to-purple-50">
       <header className="w-full py-4 bg-gradient-to-r from-indigo-50/80 to-purple-50/80 backdrop-blur-sm fixed top-0 z-50 border-b border-purple-100">
