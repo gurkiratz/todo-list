@@ -11,10 +11,15 @@ import {
 import { Button } from './ui/button'
 import { Table2Icon } from 'lucide-react'
 import Link from 'next/link'
-import { SignInButton, useAuth, UserButton } from '@clerk/nextjs'
+import {
+  RedirectToSignIn,
+  SignInButton,
+  useAuth,
+  UserButton,
+} from '@clerk/nextjs'
 import { useRecoilState } from 'recoil'
 import { getOrg } from '@/actions/orgActions'
-import { selectedOrgState } from '@/recoil/atoms/orgAtom'
+import { selectedOrgState } from '@/recoil/atoms'
 
 type OrgsType = {
   orgId: string
@@ -23,10 +28,6 @@ type OrgsType = {
 
 const Header = () => {
   const [orgs, setOrgs] = useState<OrgsType[]>()
-  // const [orgs, setOrgs] = useState<string[]>([
-  //   '9c328dcf-2653-4302-8ca2-6e5acd623e9d',
-  //   '9c328dcf-2342-4302-8ca2-6e5acd623e9d',
-  // ])
   const [selectedOrg, setSelectedOrg] = useRecoilState(selectedOrgState)
   const { userId } = useAuth()
 
@@ -45,7 +46,7 @@ const Header = () => {
     fetchOrgs()
   }, [])
 
-  if (!orgs) return <header>No orgs</header>
+  if (userId == null) return RedirectToSignIn({ redirectUrl: '/' })
 
   return (
     <header className="bg-primary text-primary-foreground py-4">
@@ -54,19 +55,22 @@ const Header = () => {
           Todo App <Table2Icon />
         </Link>
         <div className="flex items-center space-x-4">
-          <Select value={selectedOrg!} onValueChange={setSelectedOrg}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select team" />
-            </SelectTrigger>
-            <SelectContent>
-              {orgs.map((org) => (
-                <SelectItem key={org.orgId} value={org.orgId}>
-                  {org.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
+          {!orgs ? (
+            <div>Loading...</div>
+          ) : (
+            <Select value={selectedOrg!} onValueChange={setSelectedOrg}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select team" />
+              </SelectTrigger>
+              <SelectContent>
+                {orgs.map((org) => (
+                  <SelectItem key={org.orgId} value={org.orgId}>
+                    {org.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
           {!userId && (
             <Button variant="secondary" asChild>
               {/* <User className="mr-2 h-4 w-4" />

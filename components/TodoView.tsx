@@ -15,9 +15,15 @@ type Props = {
   todos: InsertTodo[]
   handleToggle: (id: string) => void
   handleDelete: (id: string) => void
+  onUpdateDescription: (id: string, description: string) => void
 }
 
-const TodoView: React.FC<Props> = ({ todos, handleDelete, handleToggle }) => {
+const TodoView: React.FC<Props> = ({
+  todos,
+  handleDelete,
+  handleToggle,
+  onUpdateDescription,
+}) => {
   const todoLists = [
     {
       title: 'To Do',
@@ -37,17 +43,18 @@ const TodoView: React.FC<Props> = ({ todos, handleDelete, handleToggle }) => {
       <div className="hidden lg:grid grid-cols-2 gap-4">
         {todoLists.map((list, index) => (
           <Card key={index}>
-            <CardHeader>
+            <CardHeader className="border-b">
               <CardTitle className="flex items-center space-x-2">
                 {list.icon}
                 <span>{list.title}</span>
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-0">
               <TodoList
                 todos={list.todos}
                 onToggle={handleToggle}
                 onDelete={handleDelete}
+                onUpdateDescription={onUpdateDescription}
               />
             </CardContent>
           </Card>
@@ -68,17 +75,18 @@ const TodoView: React.FC<Props> = ({ todos, handleDelete, handleToggle }) => {
           {todoLists.map((list, index) => (
             <TabsContent key={index} value={list.title.toLowerCase()}>
               <Card>
-                <CardHeader>
+                <CardHeader className="border-b">
                   <CardTitle>{list.title}</CardTitle>
                   <CardDescription>
                     Manage your {list.title.toLowerCase()} items
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="px-0">
                   <TodoList
                     todos={list.todos}
                     onToggle={handleToggle}
                     onDelete={handleDelete}
+                    onUpdateDescription={onUpdateDescription}
                   />
                 </CardContent>
               </Card>

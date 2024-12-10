@@ -3,6 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
 import { Input } from './ui/input'
 import { Button } from './ui/button'
 import { PlusCircle } from 'lucide-react'
+import { useRecoilValue } from 'recoil'
+import { loadingState } from '@/recoil/atoms'
 
 type Props = {
   createTodo: (newTodo: string) => void
@@ -10,11 +12,14 @@ type Props = {
 
 const AddTodo: React.FC<Props> = ({ createTodo }) => {
   const [newTodo, setNewTodo] = useState('')
+  const isLoading = useRecoilValue(loadingState)
 
   const handleCreate = (newTodo: string) => {
-    if (newTodo.trim()) {
-      createTodo(newTodo)
-      setNewTodo('')
+    if (!isLoading) {
+      if (newTodo.trim()) {
+        createTodo(newTodo)
+        setNewTodo('')
+      }
     }
   }
 
@@ -33,7 +38,7 @@ const AddTodo: React.FC<Props> = ({ createTodo }) => {
               onChange={(e) => setNewTodo(e.target.value)}
               onKeyUp={(e) => e.key === 'Enter' && handleCreate(newTodo)}
             />
-            <Button onClick={() => handleCreate(newTodo)}>
+            <Button onClick={() => handleCreate(newTodo)} disabled={isLoading}>
               <PlusCircle className="mr-2 h-4 w-4" /> Add
             </Button>
           </div>

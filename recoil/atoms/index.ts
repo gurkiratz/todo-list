@@ -4,3 +4,8 @@ export const selectedOrgState = atom<string | null>({
   key: 'selectedOrgState', // Unique ID for the atom
   default: null, // Default value (initially no organization is selected)
 })
+
+export const loadingState = atom<boolean>({
+  key: 'loadingState',
+  default: false,
+})
