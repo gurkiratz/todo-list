@@ -4,6 +4,11 @@
 
 A sleek and efficient todo application built with cutting-edge technologies. Stay organized and boost your productivity with this feature-rich task management solution.
 
+## Live Deployment
+
+You can view the live deployment of the app at the following link:
+[https://todo-list-nbdbt4nn1-gurkiratzs-projects.vercel.app/](https://todo-list-nbdbt4nn1-gurkiratzs-projects.vercel.app/)
+
 ## ✨ Features
 
 - 🔐 Secure authentication with Clerk
